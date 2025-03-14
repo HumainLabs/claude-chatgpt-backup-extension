@@ -38,23 +38,30 @@ fs.copySync('src/html', 'dist/html');
 console.log('Copying manifest.json...');
 fs.copySync('src/manifest.json', 'dist/manifest.json');
 
-// Create icons if they don't exist
-console.log('Handling icon files...');
-fs.mkdirSync('icons', { recursive: true });
+// Handle icon files
+console.log('Copying icon files...');
+fs.mkdirSync('dist/icons', { recursive: true });
 
-const icon48Path = 'icons/icon48.png';
-const icon96Path = 'icons/icon96.png';
-
-// Create placeholder icon files if they don't exist
-if (!fs.existsSync(icon48Path)) {
-  fs.writeFileSync(icon48Path, '');
+// Copy icon files from src/icons if they exist
+if (fs.existsSync('src/icons')) {
+  fs.copySync('src/icons', 'dist/icons');
 }
 
-if (!fs.existsSync(icon96Path)) {
-  fs.writeFileSync(icon96Path, '');
+// Check if custom logo exists and use it for icons
+if (fs.existsSync('humainlabs.ai.png')) {
+  console.log('Using HumainLabs.ai logo for icons...');
+  fs.copySync('humainlabs.ai.png', 'dist/icons/icon48.png');
+  fs.copySync('humainlabs.ai.png', 'dist/icons/icon96.png');
+} else {
+  console.log('HumainLabs.ai logo not found, using placeholder icons...');
+  // Create placeholder icons if they don't exist
+  if (!fs.existsSync('dist/icons/icon48.png')) {
+    fs.writeFileSync('dist/icons/icon48.png', '');
+  }
+  
+  if (!fs.existsSync('dist/icons/icon96.png')) {
+    fs.writeFileSync('dist/icons/icon96.png', '');
+  }
 }
-
-// Copy icons to the dist directory
-fs.copySync('icons', 'dist/icons');
 
 console.log('Build completed! Load the extension from the dist directory in Firefox.'); 

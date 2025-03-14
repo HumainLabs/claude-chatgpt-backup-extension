@@ -1,12 +1,13 @@
 {
   "manifest_version": 2,
-  "name": "Claude.ai Chat Backup",
+  "name": "HumainLabs Claude Chat Backup",
   "version": "1.0",
-  "description": "Backs up all conversations into one JSON file.",
+  "description": "Backs up Claude.ai conversations. Created by HumainLabs.ai.",
   "permissions": [
     "cookies",
     "downloads",
     "notifications",
+    "tabs",
     "https://claude.ai/*"
   ],
   "background": {
@@ -14,8 +15,12 @@
     "persistent": false
   },
   "browser_action": {
-    "default_title": "Backup Conversations",
-    "default_popup": "html/chat_export_popup.html"
+    "default_title": "HumainLabs Claude Backup",
+    "default_popup": "html/chat_export_popup.html",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "96": "icons/icon96.png"
+    }
   },
   "icons": {
     "48": "icons/icon48.png",
@@ -23,7 +28,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "claude-chat-backup@example.com",
+      "id": "claude-chat-backup@humainlabs.ai",
       "strict_min_version": "57.0"
     }
   }
