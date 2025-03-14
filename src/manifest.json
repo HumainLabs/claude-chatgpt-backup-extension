@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "HumainLabs Claude Chat Backup",
+  "name": "HumainLabs AI Chat Backup",
   "version": "1.0",
   "description": "Backs up Claude.ai and ChatGPT conversations. Created by HumainLabs.ai.",
   "permissions": [
