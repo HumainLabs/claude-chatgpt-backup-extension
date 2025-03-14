@@ -1,81 +1,156 @@
-# Claude.ai Chat Backup - Firefox
+# HumainLabs AI Chat Backup 💾
 
-## Description
-**Claude.ai Chat Backup - Firefox** is a Firefox extension that allows users to easily backup all their conversations from Claude.ai into a single JSON file. This tool is perfect if you want to process the files downstream with another tool.
+![TypeScript](https://img.shields.io/badge/TypeScript-4.0%2B-blue.svg) ![Firefox](https://img.shields.io/badge/Firefox-57%2B-orange.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Maintained by HumainLabs.ai](https://img.shields.io/badge/Maintained%20by-HumainLabs.ai-orange)
 
-## Features
-- One-click backup of all Claude.ai conversations which for example takes ~5 seconds for ~300 conversations
-- Exports conversations to a single JSON file
-- Filename includes timestamp and timezone offset for easy organization
-- Very simple interface
+A powerful Firefox extension for backing up your conversations from Claude.ai and ChatGPT. Save complete conversation structures, including Claude's thinking process, in easy-to-use JSON format.
 
-## Installation
-1. Download the extension from the [Firefox Addon store](https://addons.mozilla.org/en-US/firefox/addon/claude-ai-chat-backup/)
+<p align="center">
+  <img src="humainlabs.ai.png" alt="HumainLabs.ai logo" width="30%" />
+  <br>
+  <h3 align="center">HumainLabs.ai</h3>
+  <h5 align="center">Cognitive Framework Engineering & <br>Research for AI Cognition</h5>
+  <p align="center"><a href="https://humainlabs.ai" align="center">www.HumainLabs.ai</a></p>
+</p>
+
+## 📋 Table of Contents
+
+* Overview
+* Features
+* Installation
+* Usage
+* Technical Details
+* FAQ
+* License
+
+## 🔍 Overview
+
+HumainLabs AI Chat Backup redefines how users can preserve their AI interactions by enabling effortless exporting of complete conversation structures from both Claude.ai and ChatGPT. The extension provides a seamless way to download your conversations as structured JSON files, preserving all context including Claude's thinking process.
+
+The application manages the entire backup process:
+
+1. **Authentication** with the AI platforms using your existing cookies
+2. **Fetching** complete conversation data through the official APIs
+3. **Downloading** structured JSON files to your local device
+
+This Firefox extension focuses exclusively on providing a lightweight yet powerful tool for backing up your valuable AI conversations.
+
+## ✨ Features
+
+| Feature                          | Description                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Multi-Platform Support**       | Backup conversations from both Claude.ai and ChatGPT                                      |
+| **Complete Data Structure**      | Preserves entire conversation history including Claude's thinking process                  |
+| **Single Chat Backup**           | Export just your current conversation with one click                                       |
+| **Bulk Backup (Claude only)**    | Download all Claude conversations at once                                                  |
+| **Intuitive Interface**          | Clean, simple UI with platform-specific styling                                            |
+| **Structured JSON Format**       | Easy to process with downstream tools and analysis                                         |
+| **Privacy-Focused**              | Your data stays on your device, no third-party servers                                     |
+| **Smart Filename Generation**    | Automatic timestamping and chat title inclusion for easy organization                      |
+
+## 📥 Installation
+
+### From Firefox Add-on Store
+1. Download the extension from the [Firefox Addon Store](https://addons.mozilla.org/en-US/firefox/addon/claude-ai-chat-backup/)
 2. Click on "Add to Firefox" to install the extension
+3. No additional configuration needed - the extension works immediately
 
-## Usage
-1. Click on the "Claude.ai Chat Backup" extension in your Firefox extension menu
-![Extension Menu](./screenshots/extension_menu.png)
-2. In the popup, click the "Backup Conversations" button
-![Popup](./screenshots/backup.png)
-3. Give it a few seconds to make the requests (If it takes more than 10 seconds you probably broke it, nice job! Sounds like a you problem though...)
-![Eepy](./screenshots/eepy.png)
-4. Choose where you want to save the JSON file
-![File explorer](./screenshots/file_explorer.png)
-5. Your conversations will be downloaded as a JSON file named in the format: `YYYY-MM-DDTHHMM±Z_claude_conversations_export.json`
-![Post download](./screenshots/post_download.png)
+### As a Temporary Add-on (for development/testing)
+1. Download or clone the repository to your local machine
+2. Build the extension using `npm run build` (or use the pre-built files)
+3. In Firefox, navigate to `about:debugging#/runtime/this-firefox`
+4. Click on "Load Temporary Add-on..."
+5. Navigate to the extension directory and select the `manifest.json` file
+6. The extension will be loaded for the current session (will be removed when Firefox is closed)
 
-## Technical Details
-- Built using WebExtensions API
-- Written in TypeScript
-- Uses `manifest_version` 2
-- Requires permissions for cookies, downloads, and access to https://claude.ai/*
-  - `cookies`: To know the id of your organization for the API requests
-  - `downloads`: To download the JSON file to your device
-  - `https://claude.ai/*`: To access the Claude.ai website and make API requests
+## ⚠️ Prerequisites
 
-## Files
-- `manifest.json`: Extension configuration
-- `chat_export_popup.html`: HTML for the popup UI
-- `chat_export_popup.ts`: TypeScript for popup functionality
-- `chat_export_background.ts`: Background script for handling API requests and file downloads
+Before using the extension, make sure you:
 
-## FAQ
+1. **Are logged in** to your [Claude.ai](https://claude.ai) account (for Claude backups)
+2. **Are logged in** to your [ChatGPT](https://chatgpt.com) account (for ChatGPT backups)
+
+The extension uses your existing authenticated sessions to access the APIs, so it **cannot work** if you're not already logged in.
+
+## 🚀 Usage
+
+### Claude.ai Backup
+
+1. Navigate to [Claude.ai](https://claude.ai)
+2. Click on the HumainLabs extension icon in your Firefox toolbar
+3. Choose either:
+   - "Backup Current Claude Chat" to save only the current conversation
+   - "Backup All Claude Conversations" to save all your conversations
+
+### ChatGPT Backup
+
+1. Navigate to [ChatGPT](https://chatgpt.com) and open a conversation
+2. Click on the HumainLabs extension icon in your Firefox toolbar
+3. Click on "Backup Current ChatGPT Chat" to save the current conversation
+
+For both services, you'll be prompted to choose where to save the JSON file. The file will be named with the chat title and timestamp.
+
+### Sample Output Structure
+
+```json
+// Claude output includes separated thinking and response content
+{
+  "name": "Conversation Title",
+  "uuid": "conversation-id",
+  "tree_state": {
+    "messages": [
+      {
+        "sender": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "This is Claude's thinking process..."
+          },
+          {
+            "type": "text",
+            "text": "This is Claude's visible response..."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## 🔧 Technical Details
+
+- **Built with**: WebExtensions API
+- **Language**: TypeScript
+- **Manifest**: Version 2
+- **Required Permissions**:
+  - `cookies`: For authentication with AI platforms
+  - `downloads`: For saving files to your device
+  - `https://claude.ai/*`: For Claude.ai API access
+  - `https://chatgpt.com/*`: For ChatGPT API access
+
+## ❓ FAQ
+
+### Is this an official extension from Anthropic or OpenAI?
+No, this is an unofficial extension created by HumainLabs.ai. It is not affiliated with, endorsed by, or connected to Anthropic (Claude) or OpenAI (ChatGPT) in any way.
 
 ### Who can access my data?
-Your conversations stay between you, your device and Anthropic. Maybe some [insert intelligence agency] agent too, but they don't count.
+Your conversations stay between you, your device, and the respective AI service providers. The extension only facilitates downloading your own data.
 
-### Are you planning to add more features?
-Nope. This extension does one thing, and it does it well.
+### How do the downloaded JSON files differ?
+The Claude downloads include the structured conversation data with separate sections for thinking and response content. The ChatGPT downloads preserve the original conversation structure provided by OpenAI's API.
 
-### Will you be updating this regularly?
-Unless it breaks, probably not. It works, so why mess with it?
+### How secure is this extension?
+The extension only requires the permissions needed to perform its functions. It doesn't send your data anywhere except back to your device as downloaded files.
 
-### Can you add support for [insert any feature]?
-See previous answers. The extension backs up conversations. That's it.
+### Will you be adding more features?
+The extension focuses on doing one thing well: backing up your AI conversations. We may add support for more AI platforms in the future.
 
 ### I found a bug. Will you fix it?
-If it's stopping the extension from doing its one job, maybe. Otherwise, see above.
+If you find a bug that prevents the extension from performing its core backup functionality, please report it through our GitHub repository.
 
-### Can I contribute to this project?
-You're welcome to fork it and go wild. Or shamelessly copy-paste it, I don't care. I won't do any PR reviews though, so I guess no.
+## 📄 License
 
-### Will you port this to Chrome/Safari/Opera/etc.?
-That sounds like work. So, no.
+This project is licensed under the MIT License.
 
-### How often should I back up my conversations?
-Whenever you feel like it.
+---
 
-### Is there a premium version with more features?
-There isn't even a basic version with more features.
-
-### Where can I get support?
-You're looking at all the support you're going to get. This FAQ is it.
-
-### Are you okay?
-No, I hate front-end development. Claude did >90% of the work and I still hated it.
-
-
-
-## Disclaimer
-This extension is not officially associated with Anthropic or Claude.ai. Use at your own risk.
+Maintained with ❤️ by HumainLabs.ai

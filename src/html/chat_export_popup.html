@@ -44,6 +44,16 @@
         button:hover {
             background-color: #6A5ACD;
         }
+        .separator {
+            border-top: 1px solid #ddd;
+            margin: 15px 0;
+        }
+        .chatgpt-btn {
+            background-color: #10a37f; /* ChatGPT green */
+        }
+        .chatgpt-btn:hover {
+            background-color: #0e8e6d;
+        }
         .footer {
             margin-top: 15px;
             text-align: center;
@@ -62,14 +72,18 @@
 <body>
 <div class="header">
     <img src="../icons/icon48.png" alt="HumainLabs Logo" class="logo">
-    <h2>Claude Backup</h2>
+    <h2>Claude & ChatGPT Backup</h2>
 </div>
 <ul class="function-list">
     <li class="function-item">
-        <button id="exportCurrentChatBtn">Backup Current Chat</button>
+        <button id="exportCurrentChatBtn">Backup Current Claude Chat</button>
     </li>
     <li class="function-item">
-        <button id="exportConversationsBtn">Backup All Conversations</button>
+        <button id="exportConversationsBtn">Backup All Claude Conversations</button>
+    </li>
+    <div class="separator"></div>
+    <li class="function-item">
+        <button id="exportCurrentChatGPTBtn" class="chatgpt-btn">Backup Current ChatGPT Chat</button>
     </li>
 </ul>
 <div class="footer">
@@ -78,3 +92,4 @@
 <script src="../ui/chat_export_popup.js"></script>
 </body>
 </html>
+

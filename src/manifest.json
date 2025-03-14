@@ -2,20 +2,21 @@
   "manifest_version": 2,
   "name": "HumainLabs Claude Chat Backup",
   "version": "1.0",
-  "description": "Backs up Claude.ai conversations. Created by HumainLabs.ai.",
+  "description": "Backs up Claude.ai and ChatGPT conversations. Created by HumainLabs.ai.",
   "permissions": [
     "cookies",
     "downloads",
     "notifications",
     "tabs",
-    "https://claude.ai/*"
+    "https://claude.ai/*",
+    "https://chatgpt.com/*"
   ],
   "background": {
     "scripts": ["chat_export_background.js"],
     "persistent": false
   },
   "browser_action": {
-    "default_title": "HumainLabs Claude Backup",
+    "default_title": "HumainLabs AI Chat Backup",
     "default_popup": "html/chat_export_popup.html",
     "default_icon": {
       "48": "icons/icon48.png",
@@ -28,7 +29,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "claude-chat-backup@humainlabs.ai",
+      "id": "plugins@humainlabs.ai",
       "strict_min_version": "57.0"
     }
   }

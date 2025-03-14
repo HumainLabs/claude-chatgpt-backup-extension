@@ -7,6 +7,7 @@ declare const browser: Browser;
 document.addEventListener('DOMContentLoaded', () => {
     const exportConversationsBtn = document.getElementById('exportConversationsBtn');
     const exportCurrentChatBtn = document.getElementById('exportCurrentChatBtn');
+    const exportCurrentChatGPTBtn = document.getElementById('exportCurrentChatGPTBtn');
 
     if (exportConversationsBtn) {
         exportConversationsBtn.addEventListener('click', () => {
@@ -17,6 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportCurrentChatBtn) {
         exportCurrentChatBtn.addEventListener('click', () => {
             browser.runtime.sendMessage({ action: "exportCurrentChat" });
+        });
+    }
+
+    if (exportCurrentChatGPTBtn) {
+        exportCurrentChatGPTBtn.addEventListener('click', () => {
+            browser.runtime.sendMessage({ action: "exportCurrentChatGPT" });
         });
     }
 });
