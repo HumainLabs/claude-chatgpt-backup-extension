@@ -1,6 +1,6 @@
 {
   "name": "claude-chat-backup",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Firefox extension to backup Claude.ai conversations",
   "main": "index.js",
   "scripts": {
