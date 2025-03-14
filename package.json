@@ -1,0 +1,23 @@
+{
+  "name": "claude-chat-backup",
+  "version": "1.0.0",
+  "description": "Firefox extension to backup Claude.ai conversations",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build-extension.js",
+    "start": "npm run build && web-ext run -s dist",
+    "package": "npm run build && web-ext build -s dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "webextension-polyfill-ts": "^0.26.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.1.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.9.5",
+    "web-ext": "^7.2.0"
+  }
+} 

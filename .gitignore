@@ -1,0 +1,14 @@
+/node_modules/
+/dist/
+/package-lock.json
+/.idea
+.specstory
+
+# Web extension packaging files
+*.zip
+*.xpi
+*.crx
+
+# OS specific files
+.DS_Store
+Thumbs.db

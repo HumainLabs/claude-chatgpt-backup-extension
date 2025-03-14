@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "es2020",
+    "lib": ["dom", "es2020"],
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "outFile": null,
+    "isolatedModules": true,
+    "importHelpers": false
+  },
+  "files": [
+    "src/chat_export_background.ts",
+    "src/ui/chat_export_popup.ts"
+  ],
+  "include": []
+} 

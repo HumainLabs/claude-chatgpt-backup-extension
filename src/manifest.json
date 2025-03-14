@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Claude.ai Chat Backup",
+  "version": "1.0",
+  "description": "Backs up all conversations into one JSON file.",
+  "permissions": [
+    "cookies",
+    "downloads",
+    "notifications",
+    "https://claude.ai/*"
+  ],
+  "background": {
+    "scripts": ["chat_export_background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Backup Conversations",
+    "default_popup": "html/chat_export_popup.html"
+  },
+  "icons": {
+    "48": "icons/icon48.png",
+    "96": "icons/icon96.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "claude-chat-backup@example.com",
+      "strict_min_version": "57.0"
+    }
+  }
+}
