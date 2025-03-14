@@ -50,8 +50,26 @@ if (fs.existsSync('src/icons')) {
 // Check if custom logo exists and use it for icons
 if (fs.existsSync('humainlabs.ai.png')) {
   console.log('Using HumainLabs.ai logo for icons...');
-  fs.copySync('humainlabs.ai.png', 'dist/icons/icon48.png');
-  fs.copySync('humainlabs.ai.png', 'dist/icons/icon96.png');
+  
+  // IMPORTANT: Firefox requires icons to be exact sizes
+  // You need to manually resize humainlabs.ai.png to create:
+  // - icons/icon48.png: 48x48 pixels
+  // - icons/icon96.png: 96x96 pixels
+  // 
+  // This script simply copies the files but doesn't resize them.
+  // Use an image editor to create properly sized icons before building.
+  
+  // Copy existing icons if they're already in the 'icons' directory
+  if (fs.existsSync('icons/icon48.png') && fs.existsSync('icons/icon96.png')) {
+    fs.copySync('icons/icon48.png', 'dist/icons/icon48.png');
+    fs.copySync('icons/icon96.png', 'dist/icons/icon96.png');
+    console.log('Using pre-sized icons from icons/ directory');
+  } else {
+    // Fall back to copying the logo directly (not recommended for production)
+    fs.copySync('humainlabs.ai.png', 'dist/icons/icon48.png');
+    fs.copySync('humainlabs.ai.png', 'dist/icons/icon96.png');
+    console.log('WARNING: Using unsized icons. Firefox requires icons to be exact sizes (48x48, 96x96)');
+  }
 } else {
   console.log('HumainLabs.ai logo not found, using placeholder icons...');
   // Create placeholder icons if they don't exist
