@@ -1,3 +1,8 @@
+# Download from Firefox Extension Page!
+
+<a href="https://addons.mozilla.org/en-US/firefox/addon/humainlabs-claude-chat-backup/">https://addons.mozilla.org/en-US/firefox/addon/humainlabs-claude-chat-backup/</a>
+
+
 # HumainLabs AI Chat Backup 💾
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.0%2B-blue.svg) ![Firefox](https://img.shields.io/badge/Firefox-57%2B-orange.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Maintained by HumainLabs.ai](https://img.shields.io/badge/Maintained%20by-HumainLabs.ai-orange)
@@ -11,6 +16,10 @@ A powerful Firefox extension for backing up your conversations from Claude.ai an
   <h5 align="center">Cognitive Framework Engineering & <br>Research for AI Cognition</h5>
   <p align="center"><a href="https://humainlabs.ai" align="center">www.HumainLabs.ai</a></p>
 </p>
+
+## Download from Firefox Extension Page
+
+<a href="https://addons.mozilla.org/en-US/firefox/addon/humainlabs-claude-chat-backup/">https://addons.mozilla.org/en-US/firefox/addon/humainlabs-claude-chat-backup/</a>
 
 ## 📋 Table of Contents
 
