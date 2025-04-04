@@ -2,24 +2,46 @@
 // This avoids the "exports is not defined" error
 
 // Define the types we need without imports
-type Browser = any;
-type Cookie = {
+// Fixing duplicate type declarations
+interface BackgroundCustomBrowser {
+  cookies: any;
+  tabs: any;
+  downloads: any;
+  runtime: any;
+  notifications: any;
+}
+
+interface Cookie {
   name: string;
   value: string;
-};
+}
+
 type MessageSender = any;
 type Tab = {
   url: string;
   id?: number;
 };
 
-// Use browser from globalThis for Firefox compatibility
-declare const browser: Browser;
+// Type assertion for the existing browser global
+// Use a file-specific variable name to avoid redeclaration issues between files
+const bgBrowserAPI = (window as any).browser as BackgroundCustomBrowser;
 
 // ===== ChatGPT Export Functionality =====
 // Constants for ChatGPT
 const DOMAIN_CHATGPT = "chatgpt.com";
-const DEBUG = false;
+
+// Simple logger that always logs errors - with unique name for background
+const bgLogger = {
+  error: (message: string, ...args: any[]) => {
+    console.error(`[HumainLabs Backup] ${message}`, ...args);
+  },
+  log: (message: string, ...args: any[]) => {
+    // Only log in development or testing
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      console.log(`[HumainLabs Backup] ${message}`, ...args);
+    }
+  }
+};
 
 // Session data and key for encryption
 const gptSession = { data: null as any };
@@ -75,8 +97,15 @@ function decryptToken(token: string, key: string): string {
 
 // Extract thread ID from ChatGPT URL
 function getChatGPTThreadId(url: string): string | null {
-  const match = url.match(/c\/([\w-]+)/);
-  return match ? match[1] : null;
+  // Handle old format: chatgpt.com/c/{threadId}
+  const oldFormatMatch = url.match(/chatgpt\.com\/c\/([\w-]+)/);
+  if (oldFormatMatch) return oldFormatMatch[1];
+  
+  // Handle new format: chatgpt.com/g/{custom-id}/c/{conversationId}
+  const newFormatMatch = url.match(/chatgpt\.com\/g\/[^/]+\/c\/([a-zA-Z0-9-]+)/);
+  if (newFormatMatch) return newFormatMatch[1];
+  
+  return null;
 }
 
 // Get ChatGPT access token
@@ -165,20 +194,30 @@ interface ClaudeConversation {
 }
 
 async function getCookie(): Promise<string | null> {
-    const cookie = await browser.cookies.get({
-        url: 'https://claude.ai',
-        name: 'lastActiveOrg'
-    });
-    return cookie ? cookie.value : null;
+    try {
+        const cookie = await bgBrowserAPI.cookies.get({
+            url: 'https://claude.ai',
+            name: 'lastActiveOrg'
+        });
+        return cookie ? cookie.value : null;
+    } catch (error) {
+        bgLogger.error('Error getting Claude.ai cookie:', error);
+        return null;
+    }
 }
 
 // New function to get all cookies for authentication
 async function getAuthCookies(): Promise<Record<string, string>> {
-    const cookies = await browser.cookies.getAll({ url: 'https://claude.ai' });
-    return cookies.reduce((obj: Record<string, string>, cookie: Cookie) => {
-        obj[cookie.name] = cookie.value;
-        return obj;
-    }, {});
+    try {
+        const cookies = await bgBrowserAPI.cookies.getAll({ url: 'https://claude.ai' });
+        return cookies.reduce((obj: Record<string, string>, cookie: Cookie) => {
+            obj[cookie.name] = cookie.value;
+            return obj;
+        }, {});
+    } catch (error) {
+        bgLogger.error('Error getting Claude.ai auth cookies:', error);
+        return {};
+    }
 }
 
 // Function to extract conversation ID from Claude URL
@@ -244,39 +283,61 @@ function formatDateForFilename(): string {
 
 // Download a JSON file
 async function downloadJson(data: any, filename: string): Promise<void> {
-    const jsonData = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    await browser.downloads.download({
-        url: url,
-        filename: filename,
-        saveAs: true
-    });
-    URL.revokeObjectURL(url);
+    try {
+        const jsonData = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        await bgBrowserAPI.downloads.download({
+            url: url,
+            filename: filename,
+            saveAs: true
+        });
+        URL.revokeObjectURL(url);
+        
+        bgLogger.log(`Successfully created download for: ${filename}`);
+    } catch (error) {
+        bgLogger.error(`Error downloading JSON file ${filename}:`, error);
+        throw error; // Re-throw to be handled by the caller
+    }
 }
 
 // Show a notification
 async function showNotification(title: string, message: string, isError: boolean = false): Promise<void> {
-    await browser.notifications.create({
-        type: "basic",
-        iconUrl: browser.runtime.getURL("icons/icon48.png"),
-        title: isError ? `HumainLabs Claude Backup Error` : `HumainLabs Claude Backup`,
-        message: message
-    });
+    try {
+        await bgBrowserAPI.notifications.create({
+            type: "basic",
+            iconUrl: bgBrowserAPI.runtime.getURL("icons/icon48.png"),
+            title: isError ? `HumainLabs Claude Backup Error` : `HumainLabs Claude Backup`,
+            message: message
+        });
+        
+        // Also log to console for easier debugging
+        if (isError) {
+            bgLogger.error(`${title}: ${message}`);
+        } else {
+            bgLogger.log(`${title}: ${message}`);
+        }
+    } catch (error) {
+        // At minimum, log to console if notification fails
+        bgLogger.error('Failed to show notification:', error);
+        bgLogger.error(`${title}: ${message}`);
+    }
 }
 
 // Export current chat from the active tab
 async function exportCurrentChat() {
     try {
         // Get current active tab
-        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        const tabs = await bgBrowserAPI.tabs.query({ active: true, currentWindow: true });
         const currentTab = tabs[0] as Tab;
         
         if (!currentTab.url || !currentTab.url.includes('claude.ai/chat')) {
+            const errorMsg = "Please open a Claude.ai chat before using this feature.";
+            bgLogger.error(errorMsg);
             await showNotification(
                 "HumainLabs Claude Backup Error", 
-                "Please open a Claude.ai chat before using this feature.",
+                errorMsg,
                 true
             );
             return;
@@ -322,7 +383,7 @@ async function exportCurrentChat() {
             `Successfully exported "${chatTitle}"!`
         );
     } catch (error) {
-        console.error("Error exporting current chat:", error);
+        bgLogger.error("Error exporting current chat:", error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         await showNotification(
             "HumainLabs Claude Backup Error", 
@@ -361,7 +422,7 @@ async function exportConversations() {
             `Successfully exported ${detailedConversations.length} conversations!`
         );
     } catch (error) {
-        console.error("Error exporting conversations:", error);
+        bgLogger.error("Error exporting conversations:", error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         await showNotification(
             "HumainLabs Claude Backup Error", 
@@ -375,13 +436,18 @@ async function exportConversations() {
 async function exportCurrentChatGPT() {
     try {
         // Get current active tab
-        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        const tabs = await bgBrowserAPI.tabs.query({ active: true, currentWindow: true });
         const currentTab = tabs[0] as Tab;
         
-        if (!currentTab.url || !currentTab.url.includes('chatgpt.com/c/')) {
+        // Check for both old and new URL formats
+        if (!currentTab.url || 
+            !(currentTab.url.includes('chatgpt.com/c/') || 
+              currentTab.url.match(/chatgpt\.com\/g\/[^/]+\/c\//))) {
+            const errorMsg = "Please open a ChatGPT conversation before using this feature.";
+            bgLogger.error(errorMsg);
             await showNotification(
                 "HumainLabs ChatGPT Backup Error", 
-                "Please open a ChatGPT conversation before using this feature.",
+                errorMsg,
                 true
             );
             return;
@@ -390,13 +456,17 @@ async function exportCurrentChatGPT() {
         // Extract the thread ID from the URL
         const threadId = getChatGPTThreadId(currentTab.url);
         if (!threadId) {
+            const errorMsg = "Could not identify the conversation ID from the current page.";
+            bgLogger.error(errorMsg, "URL:", currentTab.url);
             await showNotification(
                 "HumainLabs ChatGPT Backup Error", 
-                "Could not identify the conversation ID from the current page.",
+                errorMsg,
                 true
             );
             return;
         }
+        
+        bgLogger.log("Fetching ChatGPT conversation with ID:", threadId);
         
         // Get the conversation data
         const conversationData = await getChatGPTConversation(threadId);
@@ -408,7 +478,7 @@ async function exportCurrentChatGPT() {
         const blob = new Blob([exportData.content], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         
-        await browser.downloads.download({
+        await bgBrowserAPI.downloads.download({
             url: url,
             filename: exportData.filename,
             saveAs: true
@@ -418,12 +488,14 @@ async function exportCurrentChatGPT() {
         URL.revokeObjectURL(url);
         
         // Show success notification
+        const successMsg = "Successfully exported ChatGPT conversation!";
+        bgLogger.log(successMsg);
         await showNotification(
             "HumainLabs ChatGPT Backup", 
-            "Successfully exported ChatGPT conversation!"
+            successMsg
         );
     } catch (error) {
-        console.error("Error exporting ChatGPT chat:", error);
+        bgLogger.error("Error exporting ChatGPT chat:", error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         await showNotification(
             "HumainLabs ChatGPT Backup Error", 
@@ -434,7 +506,8 @@ async function exportCurrentChatGPT() {
 }
 
 // Handle messages from the popup
-browser.runtime.onMessage.addListener((message: any, sender: MessageSender) => {
+bgBrowserAPI.runtime.onMessage.addListener((message: any, sender: MessageSender) => {
+    bgLogger.log("Received message:", message.action);
     if (message.action === "exportConversations") {
         exportConversations();
     } else if (message.action === "exportCurrentChat") {
